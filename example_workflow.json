@@ -1,0 +1,47 @@
+{
+  "//": "示例工作流（JSON 版本），与 example_workflow.yaml 等价",
+  "id": "example_workflow_json",
+  "nodes": [
+    {
+      "//": "第一个节点：回声节点，固定返回一段文本",
+      "id": "node1",
+      "type": "echo",
+      "config": {},
+      "inputs": {
+        "text": "Hello from JSON"
+      }
+    },
+    {
+      "//": "第二个节点：为上游结果增加前缀",
+      "id": "node2",
+      "type": "transform",
+      "config": {
+        "prefix": "JSON Transformed: "
+      },
+      "inputs": {
+        "text": "$node1.result"
+      }
+    },
+    {
+      "//": "第三个节点：将文本按字符拆分并流式输出",
+      "id": "node3",
+      "type": "stream",
+      "inputs": {
+        "text": "$node2.result"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "//": "node1 的输出流向 node2",
+      "from": "node1",
+      "to": "node2"
+    },
+    {
+      "//": "node2 的输出流向 node3",
+      "from": "node2",
+      "to": "node3"
+    }
+  ]
+}
+

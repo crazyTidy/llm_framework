@@ -1,0 +1,59 @@
+id: workflow_with_loop_switch  # 包含 loop 与 switch 控制流的示例工作流
+nodes:
+  - id: node1  # 普通 echo 节点
+    type: echo
+    config: {}
+    inputs:
+      text: "Start"
+  
+  - id: loop1  # 循环控制节点
+    type: loop
+    config:
+      max_iterations: 3  # 最多循环 3 次，防止死循环
+      # concurrent: true  # 并发执行子节点
+    condition:  # 循环继续条件：当前迭代次数 < 3
+      type: compare
+      left: $loop1.iteration.result
+      operator: <
+      right: 3
+    nodes:  # 循环体内的子节点列表
+      - id: counter
+        type: transform
+        config:
+          prefix: "Iteration "
+        inputs:
+          text: $loop1.iteration.result  # 使用当前迭代次数作为文本
+  
+  - id: switch1  # 条件分支节点
+    type: switch
+    condition: $node1.result  # 根据 node1 的结果选择分支
+    cases:
+      - value: "Echo: Start"  # 当 node1 输出为 Echo: Start 时走该分支
+        nodes:
+          - id: node2
+            type: echo
+            config: {}
+            inputs:
+              text: "Case 1 matched"
+      - value: "Other"  # 其他情况示例分支
+        nodes:
+          - id: node3
+            type: transform
+            config:
+              prefix: "Case 2: "
+            inputs:
+              text: "Other value"
+    default:  # 没有任何分支命中时走默认分支
+      nodes:
+        - id: node4
+          type: echo
+          config: {}
+          inputs:
+            text: "Default case"
+
+connections:  # 明确声明 node1 -> loop1 -> switch1 的执行顺序
+  - from: node1
+    to: loop1
+  - from: loop1
+    to: switch1
+

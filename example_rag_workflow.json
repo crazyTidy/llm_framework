@@ -1,0 +1,100 @@
+{
+  "//": "RAG 示例工作流（JSON 版本），与 example_rag_workflow.yaml 等价",
+  "id": "rag_workflow",
+  "nodes": [
+    {
+      "//": "思考节点：接收原始问题并输出思考描述",
+      "id": "think",
+      "type": "think",
+      "config": {},
+      "inputs": {
+        "question": "如何使用Python进行API开发？"
+      }
+    },
+    {
+      "//": "任务规划节点：将问题拆解成最多 3 个任务",
+      "id": "task_planner",
+      "type": "task_planner",
+      "config": {
+        "max_tasks": 3
+      },
+      "inputs": {
+        "question": "$think.result"
+      }
+    },
+    {
+      "//": "第一个 RAG 节点，执行第 1 个任务",
+      "id": "rag1",
+      "type": "rag",
+      "config": {},
+      "inputs": {
+        "task": "$task_planner.tasks[0]"
+      }
+    },
+    {
+      "//": "第二个 RAG 节点，执行第 2 个任务",
+      "id": "rag2",
+      "type": "rag",
+      "config": {},
+      "inputs": {
+        "task": "$task_planner.tasks[1]"
+      }
+    },
+    {
+      "//": "第三个 RAG 节点，执行第 3 个任务",
+      "id": "rag3",
+      "type": "rag",
+      "config": {},
+      "inputs": {
+        "task": "$task_planner.tasks[2]"
+      }
+    },
+    {
+      "//": "总结节点：汇总三个 RAG 结果并生成最终回答",
+      "id": "summarize",
+      "type": "summarize",
+      "config": {},
+      "inputs": {
+        "question": "$think.question",
+        "rag_results": [
+          "$rag1.result",
+          "$rag2.result",
+          "$rag3.result"
+        ]
+      }
+    }
+  ],
+  "connections": [
+    {
+      "//": "思考节点输出流向任务规划节点",
+      "from": "think",
+      "to": "task_planner"
+    },
+    {
+      "from": "task_planner",
+      "to": "rag1"
+    },
+    {
+      "from": "task_planner",
+      "to": "rag2"
+    },
+    {
+      "from": "task_planner",
+      "to": "rag3"
+    },
+    {
+      "//": "三个 RAG 节点的结果都流向总结节点",
+      "from": "rag1",
+      "to": "summarize"
+    },
+    {
+      "from": "rag2",
+      "to": "summarize"
+    },
+    {
+      "from": "rag3",
+      "to": "summarize"
+    }
+  ]
+}
+

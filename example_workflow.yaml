@@ -1,0 +1,26 @@
+id: example_workflow  # 工作流 ID
+nodes:  # 节点列表（按声明顺序默认执行）
+  - id: node1  # 第一个节点：简单回声
+    type: echo  # 使用 EchoNode
+    config: {}  # 当前节点无额外配置
+    inputs:  # 节点输入
+      text: "Hello"  # 固定输入文本
+  
+  - id: node2  # 第二个节点：前缀转换
+    type: transform  # 使用 TransformNode
+    config:
+      prefix: "Transformed: "  # 转换前缀
+    inputs:
+      text: $node1.result  # 从 node1 的 result 字段读取输出
+  
+  - id: node3  # 第三个节点：流式输出
+    type: stream  # 使用 StreamNode
+    inputs:
+      text: $node2.result  # 读取 node2 的结果并按字符流式输出
+
+connections:  # 显式声明节点之间的连接关系
+  - from: node1
+    to: node2
+  - from: node2
+    to: node3
+

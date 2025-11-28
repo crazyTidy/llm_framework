@@ -1,0 +1,7 @@
+# FastAPI 与相关依赖列表
+fastapi==0.104.1       # Web 框架，用于构建 API
+uvicorn==0.24.0        # ASGI 服务器，运行 FastAPI
+pydantic==2.5.0        # 数据模型与校验
+pyyaml==6.0.1          # 解析 YAML 配置文件
+sse-starlette==1.8.2   # SSE 支持，实现流式响应
+

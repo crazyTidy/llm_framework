@@ -1,0 +1,22 @@
+id: tool_workflow
+nodes:
+  - id: input_json
+    type: echo
+    config: {}
+    inputs:
+      text: '{"name": "Alice", "age": 30}'
+
+  - id: json_to_md
+    type: tool
+    config:
+      tool_name: json_to_md_table
+    inputs:
+      tool_name: json_to_md_table
+      params:
+        data: $input_json.result
+
+connections:
+  - from: input_json
+    to: json_to_md
+
+
